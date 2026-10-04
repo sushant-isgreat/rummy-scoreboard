@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Rummy Scoreboard</title>
+  <meta name="description" content="A premium mobile-first Rummy Scoreboard to track rounds and player points with ease.">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Rummy">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Mobile Container Wrapper -->
+  <div class="app-viewport">
+    
+    <!-- ========================================== -->
+    <!-- SCREEN 1: HOME SCREEN (PLAYER SETUP)      -->
+    <!-- ========================================== -->
+    <section id="screen-home" class="screen active">
+      <header class="app-header">
+        <div class="brand-badge">
+          <span class="suit-icon red">♦</span>
+          <span class="suit-icon black">♠</span>
+          <span class="suit-icon red">♥</span>
+          <span class="suit-icon black">♣</span>
+        </div>
+        <h1 class="brand-title">RUMMY</h1>
+        <p class="brand-subtitle">Scoreboard Companion</p>
+        <div class="home-actions-bar">
+          <button type="button" id="btn-open-saved-home" class="btn-saved-chip" aria-label="Open saved games">
+            <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span>Saved Games</span>
+            <span id="saved-games-count-badge" class="chip-badge">0</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="home-content">
+        <!-- Quick Count Selector Card -->
+        <div class="setup-card count-selector-card">
+          <div class="card-header">
+            <span class="label">Number of Players</span>
+            <span class="badge" id="player-count-badge">4 Players</span>
+          </div>
+          <div class="player-count-chips" role="radiogroup" aria-label="Select player count">
+            <button type="button" class="count-chip" data-count="2">2</button>
+            <button type="button" class="count-chip" data-count="3">3</button>
+            <button type="button" class="count-chip active" data-count="4">4</button>
+            <button type="button" class="count-chip" data-count="5">5</button>
+            <button type="button" class="count-chip" data-count="6">6</button>
+          </div>
+        </div>
+
+        <!-- Player Names Input List -->
+        <div class="setup-card players-card">
+          <div class="card-header">
+            <span class="label">Player Names</span>
+            <span class="subtext">2 to 6 players</span>
+          </div>
+
+          <div id="player-inputs-container" class="player-inputs-list">
+            <!-- Dynamically populated or updated via JS -->
+          </div>
+
+          <button type="button" id="btn-add-player" class="btn-secondary add-player-btn" aria-label="Add a player">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Add Player</span>
+          </button>
+        </div>
+
+        <!-- Setup Notice / Rules Info -->
+        <div class="info-banner">
+          <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span>Round grid will be configured for selected players. Tap below to begin scoring.</span>
+        </div>
+      </main>
+
+      <footer class="home-footer">
+        <button type="button" id="btn-start-game" class="btn-primary start-btn">
+          <span>Start Scoreboard</span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </footer>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: MAIN SCOREBOARD SCREEN          -->
+    <!-- ========================================== -->
+    <section id="screen-scoreboard" class="screen">
+      <!-- Scoreboard Top Bar -->
+      <header class="scoreboard-header">
+        <button type="button" id="btn-back-setup" class="icon-btn" aria-label="Back to Player Setup" title="Back to Setup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+
+        <div class="scoreboard-title-wrap">
+          <div class="game-title-row" id="game-title-trigger" title="Click to rename game">
+            <h2 class="scoreboard-title" id="scoreboard-game-title">Rummy Game #1</h2>
+            <button type="button" id="btn-rename-game-trigger" class="icon-btn-inline" aria-label="Rename Game">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+          </div>
+          <span class="scoreboard-meta" id="scoreboard-player-summary">4 Players &bull; Round 1</span>
+        </div>
+
+        <div class="scoreboard-header-actions">
+          <button type="button" id="btn-batch-round-header" class="icon-btn" aria-label="Score Round" title="Score All Players (Current Round)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+          <button type="button" id="btn-undo-round" class="icon-btn" aria-label="Undo Round" title="Undo / Delete Last Round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7v6h6"></path>
+              <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+            </svg>
+          </button>
+          <button type="button" id="btn-game-stats" class="icon-btn" aria-label="Match Stats & Analytics" title="Match Analytics & Leaderboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </button>
+          <button type="button" id="btn-save-game" class="icon-btn" aria-label="Save current game" title="Save Game">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+          </button>
+          <button type="button" id="btn-saved-games" class="icon-btn" aria-label="Saved Games" title="Saved Games">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </button>
+          <button type="button" id="btn-new-game" class="icon-btn" aria-label="Create New Game" title="Create New Game">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scoreboard Table Container -->
+      <main class="scoreboard-body">
+        <div class="table-scroll-wrapper" id="table-scroll-area">
+          <table class="scoreboard-table" id="scoreboard-table">
+            <thead id="scoreboard-thead">
+              <!-- Dynamically generated header with sticky round col & player columns -->
+            </thead>
+            <tbody id="scoreboard-tbody">
+              <!-- Dynamically populated round rows with point inputs -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Helper hint for mobile users -->
+        <div class="scroll-hint" id="scroll-hint">
+          <span>&larr; Scroll horizontally to view all players &bull; Tap round number (e.g. R1) to score all &rarr;</span>
+        </div>
+
+        <!-- Tactical Threshold Warning Legend -->
+        <div class="threshold-legend-bar" id="threshold-legend-bar">
+          <span class="legend-item warning">
+            <span class="legend-dot yellow"></span>
+            <span><strong>&ge; 210</strong> Non-Mid Drop</span>
+          </span>
+          <span class="legend-item danger">
+            <span class="legend-dot red"></span>
+            <span><strong>&ge; 225</strong> Non-Drop</span>
+          </span>
+          <span class="legend-item out">
+            <span class="legend-dot out"></span>
+            <span><strong>&ge; 250</strong> Out</span>
+          </span>
+        </div>
+      </main>
+
+      <!-- Floating Action Buttons -->
+      <div class="fab-group">
+        <button type="button" id="fab-score-all" class="fab-btn fab-secondary" aria-label="Score all players" title="Score All Players">
+          <svg class="fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          <span class="fab-label">Score All</span>
+        </button>
+        <button type="button" id="fab-add-round" class="fab-btn" aria-label="Add new round" title="Add New Round">
+          <svg class="fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span class="fab-label">Add Round</span>
+        </button>
+      </div>
+
+      <!-- Floating Validation Toast Banner -->
+      <div id="toast-notification" class="toast-notification" role="alert" aria-live="assertive">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="toast-message" class="toast-text">Please enter all scores for the round.</span>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- QUICK SCORE ENTRY BOTTOM SHEET MODAL       -->
+    <!-- ========================================== -->
+    <div id="score-modal-backdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="modal-player-name">
+        <div class="sheet-handle-bar">
+          <span class="sheet-handle"></span>
+        </div>
+        
+        <div class="sheet-header">
+          <div class="sheet-player-info">
+            <div id="modal-player-avatar" class="player-avatar-badge avatar-color-0">♠</div>
+            <div>
+              <h3 id="modal-player-name" class="sheet-player-name">Player 1</h3>
+              <div class="sheet-player-meta">
+                <span id="modal-round-tag" class="sheet-round-tag">Round 1</span>
+                <span id="modal-player-total-badge" class="modal-player-total-badge">Tot: 0</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" id="modal-close-btn" class="modal-close-btn" aria-label="Close score selector">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Tactical Warning Alert Banner in Modal -->
+        <div id="modal-warning-banner" class="modal-warning-banner" style="display: none;">
+          <span id="modal-warning-icon">⚠️</span>
+          <span id="modal-warning-text">Non-Middle Drop Warning</span>
+        </div>
+
+        <div class="sheet-body">
+          <p class="sheet-section-title">Select Score Type</p>
+          
+          <div class="score-types-grid">
+            <!-- Win (0 pts) -->
+            <button type="button" class="score-type-card type-win" data-score="0" data-type="win">
+              <div class="card-top">
+                <span class="type-icon">🏆</span>
+                <span class="type-badge">0 pts</span>
+              </div>
+              <span class="type-title">Win</span>
+              <span class="type-desc" id="card-desc-win">Declared winner</span>
+            </button>
+
+            <!-- Drop (25 pts) -->
+            <button type="button" class="score-type-card type-drop" data-score="25" data-type="drop">
+              <div class="card-top">
+                <span class="type-icon">🚪</span>
+                <span class="type-badge">25 pts</span>
+              </div>
+              <span class="type-title">Drop</span>
+              <span class="type-desc" id="card-desc-drop">First drop</span>
+            </button>
+
+            <!-- Middle Drop (40 pts) -->
+            <button type="button" class="score-type-card type-mid-drop" data-score="40" data-type="mid_drop">
+              <div class="card-top">
+                <span class="type-icon">⏳</span>
+                <span class="type-badge">40 pts</span>
+              </div>
+              <span class="type-title">Middle Drop</span>
+              <span class="type-desc" id="card-desc-mid-drop">Mid round drop</span>
+            </button>
+
+            <!-- Full Count (80 pts) -->
+            <button type="button" class="score-type-card type-full-count" data-score="80" data-type="full_count">
+              <div class="card-top">
+                <span class="type-icon">💥</span>
+                <span class="type-badge">80 pts</span>
+              </div>
+              <span class="type-title">Full Count</span>
+              <span class="type-desc" id="card-desc-full-count">Maximum points</span>
+            </button>
+          </div>
+
+          <!-- Custom Score Input Divider -->
+          <div class="custom-divider">
+            <span>or enter custom points</span>
+          </div>
+
+          <form id="custom-score-form" class="custom-score-form">
+            <div class="custom-input-box">
+              <input type="number" id="custom-score-input" min="0" max="80" placeholder="0 - 80" inputmode="numeric" autocomplete="off">
+              <span class="input-unit">pts</span>
+            </div>
+            <button type="submit" class="btn-apply-custom">Apply</button>
+            <button type="button" id="btn-clear-score" class="btn-clear-score" title="Clear score">Clear</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- BATCH SCORE ENTRY POPUP (ALL PLAYERS)      -->
+    <!-- ========================================== -->
+    <div id="modal-batch-score-backdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="bottom-sheet batch-score-sheet" role="dialog" aria-modal="true" aria-labelledby="batch-modal-title">
+        <div class="sheet-handle-bar"><span class="sheet-handle"></span></div>
+        
+        <div class="sheet-header">
+          <div class="sheet-player-info">
+            <div class="player-avatar-badge avatar-color-2">⚡</div>
+            <div>
+              <div class="batch-title-row">
+                <h3 id="batch-modal-title" class="sheet-player-name">Round 1 Scores</h3>
+                <span class="batch-round-pill" id="batch-modal-round-tag">Round 1</span>
+              </div>
+              <span class="sheet-round-tag" id="batch-modal-subtitle">Enter scores for all active players</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-batch-modal" class="modal-close-btn" aria-label="Close all scores window">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Quick actions toolbar inside the modal -->
+        <div class="batch-quick-toolbar">
+          <span id="batch-status-counter" class="batch-status-pill">0 of 4 entered</span>
+          <button type="button" id="btn-batch-fill-drops" class="btn-batch-quick-fill" title="Set all empty players to Drop (25 pts)">
+            Set Unfilled to Drop (25)
+          </button>
+        </div>
+
+        <!-- Scrollable list of player score rows -->
+        <div class="batch-players-scroll" id="batch-players-container">
+          <!-- Dynamically populated rows for each player -->
+        </div>
+
+        <!-- Batch Modal Actions -->
+        <div class="batch-modal-actions">
+          <button type="button" id="btn-cancel-batch" class="btn-dialog-secondary">Cancel</button>
+          <button type="button" id="btn-save-batch-scores" class="btn-dialog-primary">
+            <span>Save All Scores</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- RENAME GAME MODAL                          -->
+    <!-- ========================================== -->
+    <div id="modal-rename-backdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="bottom-sheet dialog-sheet" role="dialog" aria-modal="true" aria-labelledby="rename-modal-title">
+        <div class="sheet-handle-bar"><span class="sheet-handle"></span></div>
+        <div class="sheet-header">
+          <div class="sheet-player-info">
+            <div class="player-avatar-badge avatar-color-3">✏️</div>
+            <div>
+              <h3 id="rename-modal-title" class="sheet-player-name">Rename Game</h3>
+              <span class="sheet-round-tag">Custom title</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-rename-modal" class="modal-close-btn" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <form id="form-rename-game" class="dialog-form">
+          <div class="dialog-input-box">
+            <label for="input-game-name" class="dialog-label">Game Title</label>
+            <input type="text" id="input-game-name" class="dialog-input" maxlength="35" placeholder="e.g. Friday Poker Night" required>
+          </div>
+          <div class="dialog-actions">
+            <button type="button" id="btn-cancel-rename" class="btn-dialog-secondary">Cancel</button>
+            <button type="submit" class="btn-dialog-primary">Save Title</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SAVED GAMES LIST MODAL / DRAWER            -->
+    <!-- ========================================== -->
+    <div id="modal-saved-games-backdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="bottom-sheet saved-games-sheet" role="dialog" aria-modal="true" aria-labelledby="saved-games-title">
+        <div class="sheet-handle-bar"><span class="sheet-handle"></span></div>
+        <div class="sheet-header">
+          <div class="sheet-player-info">
+            <div class="player-avatar-badge avatar-color-1">📂</div>
+            <div>
+              <h3 id="saved-games-title" class="sheet-player-name">Saved Games</h3>
+              <span class="sheet-round-tag" id="saved-games-subtext">Manage & resume matches</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-saved-modal" class="modal-close-btn" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="saved-games-body">
+          <div id="saved-games-list" class="saved-games-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+        <div class="saved-games-footer">
+          <button type="button" id="btn-start-new-from-saved" class="btn-primary">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Start a New Game</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CONFIRM START NEW GAME MODAL               -->
+    <!-- ========================================== -->
+    <div id="modal-confirm-new-backdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="bottom-sheet dialog-sheet" role="dialog" aria-modal="true" aria-labelledby="confirm-new-title">
+        <div class="sheet-handle-bar"><span class="sheet-handle"></span></div>
+        <div class="sheet-header">
+          <div class="sheet-player-info">
+            <div class="player-avatar-badge avatar-color-0">➕</div>
+            <div>
+              <h3 id="confirm-new-title" class="sheet-player-name">Create New Game?</h3>
+              <span class="sheet-round-tag">Start fresh</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-confirm-modal" class="modal-close-btn" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="dialog-body-content">
+          <p class="dialog-desc">Your current match will remain safely saved in your <strong>Saved Games</strong> so you can resume it anytime.</p>
+          <div class="dialog-actions">
+            <button type="button" id="btn-cancel-new-game" class="btn-dialog-secondary">Keep Playing</button>
+            <button type="button" id="btn-confirm-new-game" class="btn-dialog-primary">Start New Game</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CONFIRM UNDO / DELETE ROUND MODAL          -->
+    <!-- ========================================== -->
+    <div id="modal-confirm-undo-backdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="bottom-sheet dialog-sheet" role="dialog" aria-modal="true" aria-labelledby="undo-modal-title">
+        <div class="sheet-handle-bar"><span class="sheet-handle"></span></div>
+        <div class="sheet-header">
+          <div class="sheet-player-info">
+            <div class="player-avatar-badge avatar-color-4">↩️</div>
+            <div>
+              <h3 id="undo-modal-title" class="sheet-player-name">Undo Round 1?</h3>
+              <span class="sheet-round-tag">Rollback scores</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-undo-modal" class="modal-close-btn" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="dialog-body-content">
+          <p class="dialog-desc" id="undo-modal-desc">
+            Are you sure you want to delete the latest round? All scores entered for this round will be discarded and prior cumulative totals will be restored.
+          </p>
+          <div class="dialog-actions">
+            <button type="button" id="btn-cancel-undo" class="btn-dialog-secondary">Keep Round</button>
+            <button type="button" id="btn-confirm-undo" class="btn-dialog-primary btn-dialog-danger">Delete Round</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- RE-JOIN / RE-ENTRY MODAL (POOL RUMMY RULE) -->
+    <!-- ========================================== -->
+    <div id="modal-rejoin-backdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="bottom-sheet dialog-sheet" role="dialog" aria-modal="true" aria-labelledby="rejoin-modal-title">
+        <div class="sheet-handle-bar"><span class="sheet-handle"></span></div>
+        <div class="sheet-header">
+          <div class="sheet-player-info">
+            <div class="player-avatar-badge avatar-color-5" id="rejoin-player-avatar">♻️</div>
+            <div>
+              <h3 id="rejoin-modal-title" class="sheet-player-name">Re-join Player</h3>
+              <span class="sheet-round-tag">Pool Rummy Re-entry</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-rejoin-modal" class="modal-close-btn" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="dialog-body-content">
+          <div class="rejoin-summary-box" id="rejoin-summary-box">
+            <!-- Dynamically populated calculation -->
+          </div>
+          <p class="dialog-desc" id="rejoin-modal-desc">
+            In standard 250 Pool Rummy, an eliminated player can re-enter with <strong>Highest Active Score + 1</strong> point.
+          </p>
+          <div class="dialog-actions">
+            <button type="button" id="btn-cancel-rejoin" class="btn-dialog-secondary">Cancel</button>
+            <button type="button" id="btn-confirm-rejoin" class="btn-dialog-primary">Confirm Re-entry</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- GAME STATS & ANALYTICS MODAL               -->
+    <!-- ========================================== -->
+    <div id="modal-stats-backdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="bottom-sheet stats-sheet" role="dialog" aria-modal="true" aria-labelledby="stats-modal-title">
+        <div class="sheet-handle-bar"><span class="sheet-handle"></span></div>
+        <div class="sheet-header">
+          <div class="sheet-player-info">
+            <div class="player-avatar-badge avatar-color-2">📊</div>
+            <div>
+              <h3 id="stats-modal-title" class="sheet-player-name">Match Analytics</h3>
+              <span class="sheet-round-tag" id="stats-modal-subtitle">Current standings & highlights</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-stats-modal" class="modal-close-btn" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="stats-body" id="stats-body-content">
+          <!-- Superlative highlight badges -->
+          <div class="stats-highlights-grid" id="stats-highlights-grid">
+            <!-- Dynamically populated awards -->
+          </div>
+
+          <!-- Player Leaderboard Table/Cards -->
+          <div class="stats-section-title">Leaderboard & Player Metrics</div>
+          <div class="stats-players-list" id="stats-players-list">
+            <!-- Dynamically populated player cards -->
+          </div>
+        </div>
+
+        <div class="stats-footer-actions">
+          <button type="button" id="btn-share-stats" class="btn-primary btn-share">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="18" height="18">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              <polyline points="16 6 12 2 8 6"></polyline>
+              <line x1="12" y1="2" x2="12" y2="15"></line>
+            </svg>
+            <span>Share / Copy to WhatsApp</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VICTORY CELEBRATION MODAL                  -->
+    <!-- ========================================== -->
+    <div id="modal-victory-backdrop" class="modal-backdrop" aria-hidden="true">
+      <!-- Fullscreen celebration canvas for silky smooth confetti -->
+      <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+      <div class="bottom-sheet victory-sheet" role="dialog" aria-modal="true" aria-labelledby="victory-modal-title">
+        <div class="sheet-handle-bar"><span class="sheet-handle"></span></div>
+        
+        <div class="victory-header-crown">
+          <span class="victory-crown-icon">👑</span>
+          <span class="victory-banner-tag">VICTORY DECLARED</span>
+          <h2 id="victory-modal-title" class="victory-title">We Have a Winner!</h2>
+          <p class="victory-subtitle" id="victory-modal-subtitle">All opponents crossed 250 points</p>
+        </div>
+
+        <div class="victory-winner-card" id="victory-winner-card">
+          <!-- Dynamically populated winner hero card -->
+        </div>
+
+        <div class="victory-podiums-wrap" id="victory-podiums-wrap">
+          <!-- Dynamically populated podium ranks -->
+        </div>
+
+        <div class="victory-actions">
+          <button type="button" id="btn-share-victory" class="btn-primary btn-share">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="18" height="18">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              <polyline points="16 6 12 2 8 6"></polyline>
+              <line x1="12" y1="2" x2="12" y2="15"></line>
+            </svg>
+            <span>Share Results to WhatsApp</span>
+          </button>
+          <div class="victory-secondary-row">
+            <button type="button" id="btn-view-stats-from-victory" class="btn-dialog-secondary">View Match Stats</button>
+            <button type="button" id="btn-close-victory" class="btn-dialog-secondary">View Scoreboard</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('Rummy Service Worker registered successfully:', reg.scope);
+        }).catch((err) => {
+          console.warn('Service Worker registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
